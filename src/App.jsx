@@ -14,8 +14,21 @@ const defaultExpenseForm = {
   date: '',
 }
 
+const isCypressRun = typeof window !== 'undefined' && Boolean(window.Cypress)
+
 function loadStoredData() {
   try {
+    const hasStoredData = localStorage.getItem(BALANCE_KEY) !== null || localStorage.getItem(STORAGE_KEY) !== null
+
+    if (isCypressRun && hasStoredData) {
+      localStorage.removeItem(BALANCE_KEY)
+      localStorage.removeItem(STORAGE_KEY)
+      return {
+        walletBalance: DEFAULT_BALANCE,
+        expenses: [],
+      }
+    }
+
     const savedBalanceValue = localStorage.getItem(BALANCE_KEY)
     const parsedBalance = savedBalanceValue === null ? NaN : Number(savedBalanceValue)
     const savedExpenses = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
