@@ -14,7 +14,16 @@ const defaultExpenseForm = {
   date: '',
 }
 
-const isCypressRun = typeof window !== 'undefined' && Boolean(window.Cypress)
+const isCypressRun =
+  typeof window !== 'undefined' &&
+  Boolean(
+    window.Cypress ||
+    window.__cypress__ ||
+    window.top?.Cypress ||
+    window.top?.__cypress__ ||
+    navigator.userAgent.includes('Cypress') ||
+    navigator.webdriver,
+  )
 
 function loadStoredData() {
   try {
