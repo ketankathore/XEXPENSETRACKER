@@ -16,11 +16,12 @@ const defaultExpenseForm = {
 
 function loadStoredData() {
   try {
-    const savedBalance = Number(localStorage.getItem(BALANCE_KEY))
+    const savedBalanceValue = localStorage.getItem(BALANCE_KEY)
+    const parsedBalance = savedBalanceValue === null ? NaN : Number(savedBalanceValue)
     const savedExpenses = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
 
     return {
-      walletBalance: Number.isFinite(savedBalance) ? savedBalance : DEFAULT_BALANCE,
+      walletBalance: Number.isFinite(parsedBalance) && parsedBalance >= 0 ? parsedBalance : DEFAULT_BALANCE,
       expenses: Array.isArray(savedExpenses) ? savedExpenses : [],
     }
   } catch {
@@ -39,8 +40,8 @@ function formatCurrency(value) {
 }
 
 function App() {
-  const [walletBalance, setWalletBalance] = useState(DEFAULT_BALANCE)
-  const [expenses, setExpenses] = useState([])
+  const [walletBalance, setWalletBalance] = useState(() => loadStoredData().walletBalance)
+  const [expenses, setExpenses] = useState(() => loadStoredData().expenses)
   const [incomeAmount, setIncomeAmount] = useState('')
   const [incomeError, setIncomeError] = useState('')
   const [expenseForm, setExpenseForm] = useState(defaultExpenseForm)
@@ -48,12 +49,6 @@ function App() {
   const [isIncomeOpen, setIsIncomeOpen] = useState(false)
   const [isExpenseOpen, setIsExpenseOpen] = useState(false)
   const [editingId, setEditingId] = useState(null)
-
-  useEffect(() => {
-    const storedData = loadStoredData()
-    setWalletBalance(storedData.walletBalance)
-    setExpenses(storedData.expenses)
-  }, [])
 
   useEffect(() => {
     localStorage.setItem(BALANCE_KEY, String(walletBalance))
