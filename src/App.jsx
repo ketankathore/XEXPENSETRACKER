@@ -4,6 +4,8 @@ import './App.css'
 const DEFAULT_BALANCE = 5000
 const STORAGE_KEY = 'expenses'
 const BALANCE_KEY = 'walletBalance'
+const STORAGE_VERSION_KEY = 'expenseTrackerDataVersion'
+const STORAGE_VERSION = 'reset-2026-05-25'
 const CATEGORIES = ['Food', 'Travel', 'Shopping', 'Bills', 'Entertainment', 'Health', 'Other']
 const COLORS = ['#2563eb', '#8b5cf6', '#14b8a6', '#f59e0b', '#ef4444', '#0f172a', '#10b981']
 
@@ -14,24 +16,14 @@ const defaultExpenseForm = {
   date: '',
 }
 
-const isCypressRun =
-  typeof window !== 'undefined' &&
-  Boolean(
-    window.Cypress ||
-    window.__cypress__ ||
-    window.top?.Cypress ||
-    window.top?.__cypress__ ||
-    navigator.userAgent.includes('Cypress') ||
-    navigator.webdriver,
-  )
-
 function loadStoredData() {
   try {
-    const hasStoredData = localStorage.getItem(BALANCE_KEY) !== null || localStorage.getItem(STORAGE_KEY) !== null
+    const savedVersion = localStorage.getItem(STORAGE_VERSION_KEY)
 
-    if (isCypressRun && hasStoredData) {
+    if (savedVersion !== STORAGE_VERSION) {
       localStorage.removeItem(BALANCE_KEY)
       localStorage.removeItem(STORAGE_KEY)
+      localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION)
       return {
         walletBalance: DEFAULT_BALANCE,
         expenses: [],
@@ -58,6 +50,8 @@ function formatCurrency(value) {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(value)
 }
 
@@ -75,6 +69,7 @@ function App() {
   useEffect(() => {
     localStorage.setItem(BALANCE_KEY, String(walletBalance))
     localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses))
+    localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION)
   }, [walletBalance, expenses])
 
   const totalExpenses = useMemo(
