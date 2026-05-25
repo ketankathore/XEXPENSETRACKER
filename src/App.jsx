@@ -4,7 +4,7 @@ import './App.css'
 const DEFAULT_BALANCE = 5000
 const STORAGE_KEY = 'expenses'
 const BALANCE_KEY = 'walletBalance'
-const CATEGORIES = ['Food', 'Transport', 'Shopping', 'Bills', 'Entertainment', 'Health', 'Other']
+const CATEGORIES = ['Food', 'Travel', 'Shopping', 'Bills', 'Entertainment', 'Health', 'Other']
 const COLORS = ['#2563eb', '#8b5cf6', '#14b8a6', '#f59e0b', '#ef4444', '#0f172a', '#10b981']
 
 const defaultExpenseForm = {
@@ -226,7 +226,7 @@ function App() {
 
       <section className="summary-grid">
         <article className="summary-card">
-          <p>Total Spent</p>
+          <p>Expenses</p>
           <h2>{formatCurrency(totalExpenses)}</h2>
         </article>
         <article className="summary-card">
@@ -296,7 +296,7 @@ function App() {
       <section className="history-card">
         <div className="section-header">
           <div>
-            <p className="eyebrow">History</p>
+            <p className="eyebrow">Transactions</p>
             <h2>Expense History</h2>
           </div>
           <button type="button" className="btn btn-primary" onClick={() => openExpenseModal()}>
